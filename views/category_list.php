@@ -8,9 +8,9 @@
         require_once "./php/main.php";
 
         # Eliminar categoria #
-        if(isset($_GET['category_id_del'])){
+        /*if(isset($_GET['category_id_del'])){
             require_once "./php/categoria_eliminar.php";
-        }
+        }*/
 
         if(!isset($_GET['page'])){
             $pagina=1;

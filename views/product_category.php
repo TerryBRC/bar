@@ -16,7 +16,7 @@
                 if($categorias->rowCount()>0){
                     $categorias=$categorias->fetchAll();
                     foreach($categorias as $row){
-                        echo '<a href="index.php?vista=product_category&category_id='.$row['categoria_id'].'" class="button is-link is-inverted is-fullwidth">'.$row['categoria_nombre'].'</a>';
+                        echo '<a href="index.php?vista=product_category&category_id='.$row['id'].'" class="button is-link is-inverted is-fullwidth">'.$row['nombre'].'</a>';
                     }
                 }else{
                     echo '<p class="has-text-centered" >No hay categorías registradas</p>';
@@ -30,15 +30,14 @@
 
                 /*== Verificando categoria ==*/
                 $check_categoria=conexion();
-                $check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE categoria_id='$categoria_id'");
+                $check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE id='$categoria_id'");
 
                 if($check_categoria->rowCount()>0){
 
                     $check_categoria=$check_categoria->fetch();
 
                     echo '
-                        <h2 class="title has-text-centered">'.$check_categoria['categoria_nombre'].'</h2>
-                        <p class="has-text-centered pb-6" >'.$check_categoria['categoria_ubicacion'].'</p>
+                        <h2 class="title has-text-centered">'.$check_categoria['nombre'].'</h2>
                     ';
 
                     require_once "./php/main.php";
