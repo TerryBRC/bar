@@ -21,7 +21,7 @@
 
         /*== Verificando usuario ==*/
     	$check_usuario=conexion();
-    	$check_usuario=$check_usuario->query("SELECT * FROM usuario WHERE usuario_id='$id'");
+    	$check_usuario=$check_usuario->query("SELECT * FROM empleados WHERE id='$id'");
 
         if($check_usuario->rowCount()>0){
         	$datos=$check_usuario->fetch();
@@ -31,19 +31,44 @@
 
 	<form action="./php/usuario_actualizar.php" method="POST" class="FormularioAjax" autocomplete="off" >
 
-		<input type="hidden" name="usuario_id" value="<?php echo $datos['usuario_id']; ?>" required >
-		
+		<input type="hidden" name="usuario_id" value="<?= $datos['id']; ?>" required >
+				<div class="columns">
+			<div class="column">
+				<div class="control">
+					<label>Activo</label>
+					<input type="checkbox" name="activo" value="1" <?php if($datos['activo'] == 1) echo 'checked'; ?>>
+				</div>
+			</div>
+			<div class="column">
+				<div class="control">
+					<label>Rol</label>
+					<div class="select">
+						<select name="rol_usuario" >
+							<?php
+								$categorias=conexion();
+								$categorias=$categorias->query("SELECT * FROM roles");
+								if($categorias->rowCount()>0){
+									$categorias=$categorias->fetchAll();
+									foreach($categorias as $row){
+										if($datos['rol_id']==$row['id']){
+											echo '<option value="'.$row['id'].'" selected="" >'.$row['nombre'].' (Actual)</option>';
+										}else{
+											echo '<option value="'.$row['id'].'" >'.$row['nombre'].'</option>';
+										}
+									}
+								}
+								$categorias=null;
+							?>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="columns">
 		  	<div class="column">
 		    	<div class="control">
-					<label>Nombres</label>
-				  	<input class="input" type="text" name="usuario_nombre" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required value="<?php echo $datos['usuario_nombre']; ?>" >
-				</div>
-		  	</div>
-		  	<div class="column">
-		    	<div class="control">
-					<label>Apellidos</label>
-				  	<input class="input" type="text" name="usuario_apellido" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}" maxlength="40" required value="<?php echo $datos['usuario_apellido']; ?>" >
+					<label>Nombre Completo</label>
+				  	<input class="input" type="text" name="usuario_nombre" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,100}" maxlength="40"  value="<?php echo $datos['nombre']; ?>" required>
 				</div>
 		  	</div>
 		</div>
@@ -51,16 +76,11 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Usuario</label>
-				  	<input class="input" type="text" name="usuario_usuario" pattern="[a-zA-Z0-9]{4,20}" maxlength="20" required value="<?php echo $datos['usuario_usuario']; ?>" >
-				</div>
-		  	</div>
-		  	<div class="column">
-		    	<div class="control">
-					<label>Email</label>
-				  	<input class="input" type="email" name="usuario_email" maxlength="70" value="<?php echo $datos['usuario_email']; ?>" >
+				  	<input class="input" type="text" name="usuario_usuario" pattern="[a-zA-Z0-9]{4,20}" maxlength="20" required value="<?php echo $datos['usuario']; ?>" >
 				</div>
 		  	</div>
 		</div>
+
 		<br><br>
 		<p class="has-text-centered">
 			SI desea actualizar la clave de este usuario por favor llene los 2 campos. Si NO desea actualizar la clave deje los campos vacíos.

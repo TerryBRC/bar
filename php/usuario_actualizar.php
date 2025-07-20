@@ -8,7 +8,7 @@
 
     /*== Verificando usuario ==*/
 	$check_usuario=conexion();
-	$check_usuario=$check_usuario->query("SELECT * FROM usuario WHERE usuario_id='$id'");
+	$check_usuario=$check_usuario->query("SELECT * FROM empleados WHERE id='$id'");
 
     if($check_usuario->rowCount()<=0){
     	echo '
@@ -51,7 +51,7 @@
         exit();
     }
 
-    if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$admin_clave)){
+    if(verificar_datos("[a-zA-Z0-9$@.-]{4,100}",$admin_clave)){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -64,12 +64,12 @@
 
     /*== Verificando el administrador en DB ==*/
     $check_admin=conexion();
-    $check_admin=$check_admin->query("SELECT usuario_usuario,usuario_clave FROM usuario WHERE usuario_usuario='$admin_usuario' AND usuario_id='".$_SESSION['id']."'");
+    $check_admin=$check_admin->query("SELECT usuario,clave FROM empleados WHERE usuario='$admin_usuario' AND id='".$_SESSION['id']."'");
     if($check_admin->rowCount()==1){
 
     	$check_admin=$check_admin->fetch();
 
-    	if($check_admin['usuario_usuario']!=$admin_usuario || !password_verify($admin_clave, $check_admin['usuario_clave'])){
+    	if($check_admin['usuario']!=$admin_usuario || !password_verify($admin_clave, $check_admin['clave'])){
     		echo '
 	            <div class="notification is-danger is-light">
 	                <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -93,17 +93,16 @@
 
     /*== Almacenando datos del usuario ==*/
     $nombre=limpiar_cadena($_POST['usuario_nombre']);
-    $apellido=limpiar_cadena($_POST['usuario_apellido']);
 
     $usuario=limpiar_cadena($_POST['usuario_usuario']);
-    $email=limpiar_cadena($_POST['usuario_email']);
 
     $clave_1=limpiar_cadena($_POST['usuario_clave_1']);
     $clave_2=limpiar_cadena($_POST['usuario_clave_2']);
-
+    $rolid=limpiar_cadena($_POST['rol_usuario']);
+    $activo = isset($_POST['activo']) ? 1 : 0;
 
     /*== Verificando campos obligatorios del usuario ==*/
-    if($nombre=="" || $apellido=="" || $usuario==""){
+    if($nombre=="" || $usuario=="" || $activo==""){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -125,16 +124,6 @@
         exit();
     }
 
-    if(verificar_datos("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,40}",$apellido)){
-        echo '
-            <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
-                El APELLIDO no coincide con el formato solicitado
-            </div>
-        ';
-        exit();
-    }
-
     if(verificar_datos("[a-zA-Z0-9]{4,20}",$usuario)){
         echo '
             <div class="notification is-danger is-light">
@@ -146,37 +135,10 @@
     }
 
 
-    /*== Verificando email ==*/
-    if($email!="" && $email!=$datos['usuario_email']){
-        if(filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $check_email=conexion();
-            $check_email=$check_email->query("SELECT usuario_email FROM usuario WHERE usuario_email='$email'");
-            if($check_email->rowCount()>0){
-                echo '
-                    <div class="notification is-danger is-light">
-                        <strong>¡Ocurrio un error inesperado!</strong><br>
-                        El correo electrónico ingresado ya se encuentra registrado, por favor elija otro
-                    </div>
-                ';
-                exit();
-            }
-            $check_email=null;
-        }else{
-            echo '
-                <div class="notification is-danger is-light">
-                    <strong>¡Ocurrio un error inesperado!</strong><br>
-                    Ha ingresado un correo electrónico no valido
-                </div>
-            ';
-            exit();
-        } 
-    }
-
-
     /*== Verificando usuario ==*/
-    if($usuario!=$datos['usuario_usuario']){
+    if($usuario!=$datos['usuario']){
 	    $check_usuario=conexion();
-	    $check_usuario=$check_usuario->query("SELECT usuario_usuario FROM usuario WHERE usuario_usuario='$usuario'");
+	    $check_usuario=$check_usuario->query("SELECT usuario FROM empleados WHERE usuario='$usuario'");
 	    if($check_usuario->rowCount()>0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -192,7 +154,7 @@
 
     /*== Verificando claves ==*/
     if($clave_1!="" || $clave_2!=""){
-    	if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$clave_1) || verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$clave_2)){
+    	if(verificar_datos("[a-zA-Z0-9$@.-]{4,100}",$clave_1) || verificar_datos("[a-zA-Z0-9$@.-]{4,100}",$clave_2)){
 	        echo '
 	            <div class="notification is-danger is-light">
 	                <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -214,20 +176,20 @@
 		    }
 	    }
     }else{
-    	$clave=$datos['usuario_clave'];
+    	$clave=$datos['clave'];
     }
 
 
     /*== Actualizar datos ==*/
     $actualizar_usuario=conexion();
-    $actualizar_usuario=$actualizar_usuario->prepare("UPDATE usuario SET usuario_nombre=:nombre,usuario_apellido=:apellido,usuario_usuario=:usuario,usuario_clave=:clave,usuario_email=:email WHERE usuario_id=:id");
+    $actualizar_usuario=$actualizar_usuario->prepare("UPDATE empleados SET nombre=:nombre,usuario=:usuario,clave=:clave,rol_id=:rol_id,activo=:activo WHERE id=:id");
 
     $marcadores=[
         ":nombre"=>$nombre,
-        ":apellido"=>$apellido,
         ":usuario"=>$usuario,
         ":clave"=>$clave,
-        ":email"=>$email,
+        ":rol_id"=>$rolid,
+        ":activo"=>$activo,
         ":id"=>$id
     ];
 

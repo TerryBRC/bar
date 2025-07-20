@@ -29,8 +29,7 @@ function enviar_formulario_ajax(e){
             let contenedor=document.querySelector(".form-rest");
             contenedor.innerHTML = respuesta;
         });
-        //Limpieza del formulario
-        this.reset();
+
     }
 
 }

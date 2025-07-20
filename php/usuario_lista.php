@@ -24,6 +24,11 @@
 	$total = $conexion->query($consulta_total);
 	$total = (int) $total->fetchColumn();
 
+	// buscar las categorias
+	$roles = $conexion->query("SELECT * FROM roles");
+	$roles = $roles->fetchAll();
+	 
+
 	$Npaginas =ceil($total/$registros);
 
 	$tabla.='
@@ -34,6 +39,8 @@
                 	<th>#</th>
                     <th>Nombre Completo</th>
                     <th>Usuario</th>
+					<th>Rol</th>
+					<th>Activo</th>
                     <th colspan="2">Opciones</th>
                 </tr>
             </thead>
@@ -49,6 +56,20 @@
 					<td>'.$contador.'</td>
                     <td>'.$rows['nombre'].'</td>
                     <td>'.$rows['usuario'].'</td>
+					<td>';
+					foreach($roles as $rol){
+						if($rol['id']==$rows['rol_id']){
+							$tabla.=$rol['nombre'];
+						}
+					}
+					$tabla.='</td>
+							<td>';
+					if($rows['activo']==1){
+						$tabla.='<span class="tag is-success">Activo</span>';
+					}else{
+						$tabla.='<span class="tag is-danger">Inactivo</span>';
+					}
+					$tabla.='</td>					
                     <td>
                         <a href="index.php?vista=user_update&user_id_up='.$rows['id'].'" class="button is-success is-rounded is-small">Actualizar</a>
                     </td>

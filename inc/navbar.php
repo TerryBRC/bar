@@ -16,12 +16,12 @@
         <div class="navbar-start">
 
             <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">Usuarios</a>
+                <a class="navbar-link">Empleados</a>
 
                 <div class="navbar-dropdown">
                     <a href="index.php?vista=user_new" class="navbar-item">Nuevo</a>
                     <a href="index.php?vista=user_list" class="navbar-item">Lista</a>
-                    <a href="index.php?vista=user_search" class="navbar-item">Buscar</a>
+                    <!--<a href="index.php?vista=user_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
 
