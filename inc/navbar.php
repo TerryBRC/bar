@@ -56,16 +56,9 @@
                 </div>
             </div>
 
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">Ordenes</a>
-
-                <div class="navbar-dropdown">
-                    <a href="index.php?vista=order_new" class="navbar-item">Nuevo</a>
-                    <a href="index.php?vista=order_list" class="navbar-item">Lista</a>
-                   <!-- <a href="index.php?vista=order_search" class="navbar-item">Buscar</a> -->
-                    <a href="index.php?vista=order_cajero" class="navbar-item">Cajero</a>
-                </div>
-            </div>
+            <a class="navbar-item is-hoverable" href="index.php?vista=order_list">
+        Cajero
+      </a>
         </div>
 
         <div class="navbar-end">
