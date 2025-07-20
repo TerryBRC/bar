@@ -1,3 +1,5 @@
+<?php
+/*
 CREATE DATABASE IF NOT EXISTS restaurante;
 USE restaurante;
 -- ---
@@ -224,3 +226,152 @@ JOIN productos p ON do.producto_id = p.id
 WHERE o.estado = 'enviada_a_cobro'
 GROUP BY o.id, m.numero, o.fecha
 ORDER BY o.fecha DESC;
+*/
+$conexion = conexion();
+// verificamos si la mesa esta libre y no tiene una orden abierta
+$mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
+$current_order_id = 0;
+
+
+// Obtener las categorías y productos
+$consulta_categorias = "SELECT * FROM categoria";
+$stmt_categorias = $conexion->prepare($consulta_categorias);
+$stmt_categorias->execute();
+$categorias_result = $stmt_categorias->fetchAll(PDO::FETCH_ASSOC);
+
+
+if ($mesa_id > 0) {
+    $consulta_mesa = "SELECT * FROM mesas WHERE id = ?";
+    $stmt = $conexion->prepare($consulta_mesa);
+    $stmt->execute([$mesa_id]);
+    $mesa = $stmt->fetch();
+
+    if ($mesa && $mesa['estado'] == 'libre') {
+        // Crear una nueva orden para la mesa llamando al procedimiento
+        $crear_orden = "INSERT INTO ordenes (mesa_id) VALUES (?)";
+        $stmt = $conexion->prepare($crear_orden);
+        if ($stmt->execute([$mesa_id])) {
+            // Actualizar el estado de la mesa a 'ocupada'
+            $current_order_id = $conexion->lastInsertId();
+            $detalle_orden_actual = []; // Inicializar el detalle de la orden actual
+            $actualizar_mesa = "UPDATE mesas SET estado = 'ocupada' WHERE id = ?";
+            $stmt = $conexion->prepare($actualizar_mesa);
+            $stmt->execute([$mesa_id]);
+            header("Location: index.php?vista=create_order&mesa_id=$mesa_id");
+        } else {
+            echo "Error al crear la orden.";
+        }
+    } else {
+?>    
+<h1 class="title is-2 has-text-centered">Orden para Mesa <?php echo $mesa['numero']; ?></h1>
+
+<div class="columns">
+    <div class="column is-half">
+        <h2 class="title is-4">Añadir Productos</h2>
+        <form id="add-product-form" action="controllers/add_product_to_order.php" method="POST">
+            <input type="hidden" name="orden_id" value="<?php echo $current_order_id; ?>">
+
+            <?php foreach ($categorias_result as $categoria_id => $categoria): ?>
+                <div class="field">
+                    <label class="label"><?php echo $categoria['nombre']; ?></label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select name="producto_<?php echo $categoria_id; ?>" onchange="updatePrice(this)">
+                                <option value="" data-price="0">Seleccione un producto</option>
+                                <?php foreach ($categoria['productos'] as $producto): ?>
+                                    <option value="<?php echo $producto['id']; ?>" data-price="<?php echo $producto['precio']; ?>">
+                                        <?php echo $producto['nombre']; ?> ($<?php echo number_format($producto['precio'], 2); ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
+            <div class="field">
+                <label class="label">Cantidad</label>
+                <div class="control">
+                    <input class="input" type="number" name="cantidad" value="1" min="1" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Precio Unitario Seleccionado</label>
+                <div class="control">
+                    <input class="input" type="text" id="selected-price" value="$0.00" readonly>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary is-fullwidth">Agregar a la Orden</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="column is-half">
+        <h2 class="title is-4">Detalle de la Orden #<?php echo $current_order_id; ?></h2>
+        <?php if (!empty($detalle_orden_actual)): ?>
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $total_orden = 0; ?>
+                    <?php foreach ($detalle_orden_actual as $detalle): ?>
+                        <?php $subtotal = $detalle['cantidad'] * $detalle['precio']; ?>
+                        <tr>
+                            <td><?php echo $detalle['producto_nombre']; ?></td>
+                            <td><?php echo $detalle['cantidad']; ?></td>
+                            <td>$<?php echo number_format($detalle['precio'], 2); ?></td>
+                            <td>$<?php echo number_format($subtotal, 2); ?></td>
+                            <td>
+                                <a href="controllers/remove_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>" class="button is-danger is-small">Eliminar</a>
+                                </td>
+                        </tr>
+                        <?php $total_orden += $subtotal; ?>
+                    <?php endforeach; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="has-text-right has-text-weight-bold">Total:</td>
+                        <td class="has-text-weight-bold">$<?php echo number_format($total_orden, 2); ?></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="buttons is-right">
+                <a href="controllers/request_bill_action.php?mesa_id=<?php echo $mesa_id; ?>" class="button is-warning is-large">
+                    Pedir Cuenta
+                </a>
+            </div>
+        <?php else: ?>
+            <p class="notification is-info">Aún no hay productos en esta orden.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<script>
+    function updatePrice(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        document.getElementById('selected-price').value = `$${parseFloat(price).toFixed(2)}`;
+    }
+
+    // You might want to handle form submission with AJAX for a smoother experience
+    // For simplicity, this example uses a standard form submission.
+</script>
+<?php
+    }
+} else {
+    echo "ID de mesa inválido.";
+}
+?>
