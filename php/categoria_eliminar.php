@@ -4,7 +4,7 @@
 
     /*== Verificando usuario ==*/
     $check_categoria=conexion();
-    $check_categoria=$check_categoria->query("SELECT categoria_id FROM categoria WHERE categoria_id='$category_id_del'");
+    $check_categoria=$check_categoria->query("SELECT id FROM categoria WHERE id='$category_id_del'");
     
     if($check_categoria->rowCount()==1){
 
@@ -14,7 +14,7 @@
     	if($check_productos->rowCount()<=0){
 
     		$eliminar_categoria=conexion();
-	    	$eliminar_categoria=$eliminar_categoria->prepare("DELETE FROM categoria WHERE categoria_id=:id");
+	    	$eliminar_categoria=$eliminar_categoria->prepare("DELETE FROM categoria WHERE id=:id");
 
 	    	$eliminar_categoria->execute([":id"=>$category_id_del]);
 

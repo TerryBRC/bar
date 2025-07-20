@@ -29,19 +29,6 @@
         exit();
     }
 
-    if($ubicacion!=""){
-    	if(verificar_datos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{5,150}",$ubicacion)){
-	        echo '
-	            <div class="notification is-danger is-light">
-	                <strong>¡Ocurrio un error inesperado!</strong><br>
-	                La UBICACION no coincide con el formato solicitado
-	            </div>
-	        ';
-	        exit();
-	    }
-    }
-
-
     /*== Verificando nombre ==*/
     $check_nombre=conexion();
     $check_nombre=$check_nombre->query("SELECT categoria_nombre FROM categoria WHERE categoria_nombre='$nombre'");
@@ -63,7 +50,6 @@
 
     $marcadores=[
         ":nombre"=>$nombre,
-        ":ubicacion"=>$ubicacion
     ];
 
     $guardar_categoria->execute($marcadores);

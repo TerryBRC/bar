@@ -2,7 +2,7 @@
 	$inicio = ($pagina>0) ? (($pagina * $registros)-$registros) : 0;
 	$tabla="";
 
-	$campos="productos.id,productos.nombre,productos.precio,productos.categoria_id,categoria.nombre";
+	$campos="productos.id,productos.nombre as Producto,productos.precio,productos.categoria_id,categoria.nombre as Categoria";
 
 	if(isset($busqueda) && $busqueda!=""){
 
@@ -44,12 +44,10 @@
 			        <div class="media-content">
 			            <div class="content">
 			              <p>
-			                <strong>'.$contador.' - '.$rows['nombre'].'</strong><br>
-			                <strong>PRECIO:</strong> $'.$rows['precio'].', <strong>CATEGORIA:</strong> '.$rows['categoria.nombre'].'
+			                <strong>'.$contador.' - PRODUCTO: '.$rows['Producto'].'</strong> - 
+			                <strong>PRECIO:</strong> C$'.$rows['precio'].' - <strong>CATEGORIA:</strong> '.$rows['Categoria'].'
 			              </p>
-			            </div>
-			            <div class="has-text-right">
-			                <a href="index.php?vista=product_img&product_id_up='.$rows['id'].'" class="button is-link is-rounded is-small">Imagen</a>
+			            
 			                <a href="index.php?vista=product_update&product_id_up='.$rows['id'].'" class="button is-success is-rounded is-small">Actualizar</a>
 			                <a href="'.$url.$pagina.'&product_id_del='.$rows['id'].'" class="button is-danger is-rounded is-small">Eliminar</a>
 			            </div>

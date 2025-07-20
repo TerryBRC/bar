@@ -12,32 +12,21 @@
 
 	<form action="./php/producto_guardar.php" method="POST" class="FormularioAjax" autocomplete="off" enctype="multipart/form-data" >
 		<div class="columns">
-		  	<div class="column">
-		    	<div class="control">
-					<label>Código de barra</label>
-				  	<input class="input" type="text" name="producto_codigo" pattern="[a-zA-Z0-9- ]{1,70}" maxlength="70" required >
-				</div>
-		  	</div>
+		  	
 		  	<div class="column">
 		    	<div class="control">
 					<label>Nombre</label>
 				  	<input class="input" type="text" name="producto_nombre" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,$#\-\/ ]{1,70}" maxlength="70" required >
 				</div>
 		  	</div>
-		</div>
-		<div class="columns">
+		
 		  	<div class="column">
 		    	<div class="control">
 					<label>Precio</label>
 				  	<input class="input" type="text" name="producto_precio" pattern="[0-9.]{1,25}" maxlength="25" required >
 				</div>
 		  	</div>
-		  	<div class="column">
-		    	<div class="control">
-					<label>Stock</label>
-				  	<input class="input" type="text" name="producto_stock" pattern="[0-9]{1,25}" maxlength="25" required >
-				</div>
-		  	</div>
+		  	
 		  	<div class="column">
 				<label>Categoría</label><br>
 		    	<div class="select is-rounded">
@@ -49,7 +38,7 @@
     						if($categorias->rowCount()>0){
     							$categorias=$categorias->fetchAll();
     							foreach($categorias as $row){
-    								echo '<option value="'.$row['categoria_id'].'" >'.$row['categoria_nombre'].'</option>';
+    								echo '<option value="'.$row['id'].'" >'.$row['nombre'].'</option>';
 				    			}
 				   			}
 				   			$categorias=null;
@@ -58,20 +47,7 @@
 				</div>
 		  	</div>
 		</div>
-		<div class="columns">
-			<div class="column">
-				<label>Foto o imagen del producto</label><br>
-				<div class="file is-small has-name">
-				  	<label class="file-label">
-				    	<input class="file-input" type="file" name="producto_foto" accept=".jpg, .png, .jpeg" >
-				    	<span class="file-cta">
-				      		<span class="file-label">Imagen</span>
-				    	</span>
-				    	<span class="file-name">JPG, JPEG, PNG. (MAX 3MB)</span>
-				  	</label>
-				</div>
-			</div>
-		</div>
+		
 		<p class="has-text-centered">
 			<button type="submit" class="button is-info is-rounded">Guardar</button>
 		</p>

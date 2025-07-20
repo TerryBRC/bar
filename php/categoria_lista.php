@@ -6,7 +6,7 @@
 
 		$consulta_datos="SELECT * FROM categoria WHERE nombre LIKE '%$busqueda%' ORDER BY nombre ASC LIMIT $inicio,$registros";
 
-		$consulta_total="SELECT COUNT(id) FROM categoria WHERE nombre LIKE '%$busqueda%' OR categoria_ubicacion LIKE '%$busqueda%'";
+		$consulta_total="SELECT COUNT(id) FROM categoria WHERE nombre LIKE '%$busqueda%'";
 
 	}else{
 

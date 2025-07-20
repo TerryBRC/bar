@@ -31,7 +31,7 @@
                 <div class="navbar-dropdown">
                     <a href="index.php?vista=category_new" class="navbar-item">Nueva</a>
                     <a href="index.php?vista=category_list" class="navbar-item">Lista</a>
-                    <a href="index.php?vista=category_search" class="navbar-item">Buscar</a>
+                    <!-- <a href="index.php?vista=category_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
                     <a href="index.php?vista=product_new" class="navbar-item">Nuevo</a>
                     <a href="index.php?vista=product_list" class="navbar-item">Lista</a>
                     <a href="index.php?vista=product_category" class="navbar-item">Por categoría</a>
-                    <a href="index.php?vista=product_search" class="navbar-item">Buscar</a>
+                    <!-- <a href="index.php?vista=product_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
                 <div class="navbar-dropdown">
                     <a href="index.php?vista=table_new" class="navbar-item">Nuevo</a>
                     <a href="index.php?vista=table_list" class="navbar-item">Lista</a>
-                    <a href="index.php?vista=table_search" class="navbar-item">Buscar</a>
+                    <!-- <a href="index.php?vista=table_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
 

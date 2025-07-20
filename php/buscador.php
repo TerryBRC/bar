@@ -1,5 +1,5 @@
 <?php
-	$modulo_buscador=limpiar_cadena($_POST['modulo_buscador']);
+$modulo_buscador=limpiar_cadena($_POST['modulo_buscador']);
 
 	$modulos=["usuario","categoria","producto"];
 

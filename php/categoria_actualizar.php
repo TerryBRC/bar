@@ -24,7 +24,6 @@
 
     /*== Almacenando datos ==*/
     $nombre=limpiar_cadena($_POST['categoria_nombre']);
-    $ubicacion=limpiar_cadena($_POST['categoria_ubicacion']);
 
 
     /*== Verificando campos obligatorios ==*/
@@ -50,23 +49,10 @@
         exit();
     }
 
-    if($ubicacion!=""){
-    	if(verificar_datos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{5,150}",$ubicacion)){
-	        echo '
-	            <div class="notification is-danger is-light">
-	                <strong>¡Ocurrio un error inesperado!</strong><br>
-	                La UBICACION no coincide con el formato solicitado
-	            </div>
-	        ';
-	        exit();
-	    }
-    }
-
-
     /*== Verificando nombre ==*/
-    if($nombre!=$datos['categoria_nombre']){
+    if($nombre!=$datos['nombre']){
 	    $check_nombre=conexion();
-	    $check_nombre=$check_nombre->query("SELECT categoria_nombre FROM categoria WHERE categoria_nombre='$nombre'");
+	    $check_nombre=$check_nombre->query("SELECT nombre FROM categoria WHERE nombre='$nombre'");
 	    if($check_nombre->rowCount()>0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -82,11 +68,10 @@
 
     /*== Actualizar datos ==*/
     $actualizar_categoria=conexion();
-    $actualizar_categoria=$actualizar_categoria->prepare("UPDATE categoria SET categoria_nombre=:nombre,categoria_ubicacion=:ubicacion WHERE categoria_id=:id");
+    $actualizar_categoria=$actualizar_categoria->prepare("UPDATE categoria SET nombre=:nombre WHERE id=:id");
 
     $marcadores=[
         ":nombre"=>$nombre,
-        ":ubicacion"=>$ubicacion,
         ":id"=>$id
     ];
 
