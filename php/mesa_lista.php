@@ -172,7 +172,7 @@ $consulta_datos_mesas = "SELECT * FROM mesas ORDER BY numero ASC";
 $datos_mesas = $conexion->query($consulta_datos_mesas);
 ?>
 <!-- Mostramos todas las mesas con su numero y su estado con formato como de card -->
-<div class="columns is-multiline is-centered">
+<div class="columns is-multiline">
     <?php foreach ($datos_mesas as $mesa): ?>
         <div class="column">
             <div class="box has-text-centered">

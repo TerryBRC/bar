@@ -3,8 +3,6 @@
 
     /*== Almacenando datos ==*/
     $nombre=limpiar_cadena($_POST['categoria_nombre']);
-    $ubicacion=limpiar_cadena($_POST['categoria_ubicacion']);
-
 
     /*== Verificando campos obligatorios ==*/
     if($nombre==""){
@@ -31,7 +29,7 @@
 
     /*== Verificando nombre ==*/
     $check_nombre=conexion();
-    $check_nombre=$check_nombre->query("SELECT categoria_nombre FROM categoria WHERE categoria_nombre='$nombre'");
+    $check_nombre=$check_nombre->query("SELECT nombre FROM categoria WHERE nombre='$nombre'");
     if($check_nombre->rowCount()>0){
         echo '
             <div class="notification is-danger is-light">
@@ -46,7 +44,7 @@
 
     /*== Guardando datos ==*/
     $guardar_categoria=conexion();
-    $guardar_categoria=$guardar_categoria->prepare("INSERT INTO categoria(categoria_nombre,categoria_ubicacion) VALUES(:nombre,:ubicacion)");
+    $guardar_categoria=$guardar_categoria->prepare("INSERT INTO categoria(nombre) VALUES(:nombre)");
 
     $marcadores=[
         ":nombre"=>$nombre,

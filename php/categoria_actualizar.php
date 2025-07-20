@@ -7,7 +7,7 @@
 
     /*== Verificando categoria ==*/
 	$check_categoria=conexion();
-	$check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE categoria_id='$id'");
+	$check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE id='$id'");
 
     if($check_categoria->rowCount()<=0){
     	echo '

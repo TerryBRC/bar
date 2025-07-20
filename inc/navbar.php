@@ -62,7 +62,8 @@
                 <div class="navbar-dropdown">
                     <a href="index.php?vista=order_new" class="navbar-item">Nuevo</a>
                     <a href="index.php?vista=order_list" class="navbar-item">Lista</a>
-                    <a href="index.php?vista=order_search" class="navbar-item">Buscar</a>
+                   <!-- <a href="index.php?vista=order_search" class="navbar-item">Buscar</a> -->
+                    <a href="index.php?vista=order_cajero" class="navbar-item">Cajero</a>
                 </div>
             </div>
         </div>

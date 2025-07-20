@@ -54,9 +54,6 @@
                     <td>
                         <a href="index.php?vista=category_update&category_id_up='.$rows['id'].'" class="button is-success is-rounded is-small">Actualizar</a>
                     </td>
-                    <td>
-                        <a href="'.$url.$pagina.'&category_id_del='.$rows['id'].'" class="button is-danger is-rounded is-small">Eliminar</a>
-                    </td>
                 </tr>
             ';
             $contador++;

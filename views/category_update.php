@@ -5,7 +5,7 @@
 
 <div class="container pb-6 pt-6">
 	<?php
-		include "./inc/btn_back.php";
+		/*include "./inc/btn_back.php";*/
 
 		require_once "./php/main.php";
 
@@ -30,13 +30,7 @@
 		  	<div class="column">
 		    	<div class="control">
 					<label>Nombre</label>
-				  	<input class="input" type="text" name="categoria_nombre" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{4,50}" maxlength="50" required value="<?php echo $datos['categoria_nombre']; ?>" >
-				</div>
-		  	</div>
-		  	<div class="column">
-		    	<div class="control">
-					<label>Ubicación</label>
-				  	<input class="input" type="text" name="categoria_ubicacion" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{5,150}" maxlength="150" value="<?php echo $datos['categoria_ubicacion']; ?>" >
+				  	<input class="input" type="text" name="categoria_nombre" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{4,50}" maxlength="50" required value="<?php echo $datos['nombre']; ?>" >
 				</div>
 		  	</div>
 		</div>

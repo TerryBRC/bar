@@ -28,6 +28,10 @@
 	$roles = $conexion->query("SELECT * FROM roles");
 	$roles = $roles->fetchAll();
 	 
+	//imprimimos todos los datos de $datos
+	/*echo "<pre>";
+	print_r($datos);
+	echo "</pre>";*/
 
 	$Npaginas =ceil($total/$registros);
 
@@ -72,9 +76,6 @@
 					$tabla.='</td>					
                     <td>
                         <a href="index.php?vista=user_update&user_id_up='.$rows['id'].'" class="button is-success is-rounded is-small">Actualizar</a>
-                    </td>
-                    <td>
-                        <a href="'.$url.$pagina.'&user_id_del='.$rows['id'].'" class="button is-danger is-rounded is-small">Eliminar</a>
                     </td>
                 </tr>
             ';
