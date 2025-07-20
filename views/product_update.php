@@ -1,4 +1,4 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid">
 	<h1 class="title">Productos</h1>
 	<h2 class="subtitle">Actualizar producto</h2>
 </div>
@@ -18,6 +18,7 @@
 
         if($check_producto->rowCount()>0){
         	$datos=$check_producto->fetch();
+		
 	?>
 
 	<div class="form-rest mb-6 mt-6"></div>

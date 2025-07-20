@@ -1,4 +1,4 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid">
 	<h1 class="title">Productos</h1>
 	<h2 class="subtitle">Actualizar imagen de producto</h2>
 </div>

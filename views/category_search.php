@@ -1,4 +1,4 @@
-<div class="container is-fluid mb-6">
+<div class="container is-fluid">
     <h1 class="title">Categorías</h1>
     <h2 class="subtitle">Buscar categoría</h2>
 </div>
