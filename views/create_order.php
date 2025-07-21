@@ -130,7 +130,7 @@ require_once "./php/crear_orden.php";
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Subtotal</th>
-                            <th>Acciones</th>
+                            <th colspan="2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,6 +145,9 @@ require_once "./php/crear_orden.php";
                                 <td>
                                     <a href="./php/remove_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>&orden_id=<?php echo $current_order_id; ?>&mesa_id=<?php echo $mesa_id; ?>" class="button is-danger is-small">Eliminar</a>
                                 </td>
+                                <td>
+                                    <a href="./php/print_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>&orden_id=<?php echo $current_order_id; ?>&mesa_id=<?php echo $mesa_id; ?>" class="button is-success is-small">Imrpimir</a>
+                                </td>
                             </tr>
                             <?php $total_orden += $subtotal; ?>
                         <?php endforeach; ?>
@@ -153,7 +156,6 @@ require_once "./php/crear_orden.php";
                         <tr>
                             <td colspan="3" class="has-text-right has-text-weight-bold">Total:</td>
                             <td class="has-text-weight-bold">$<?php echo number_format($total_orden, 2); ?></td>
-                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
