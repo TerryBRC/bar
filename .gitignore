@@ -1,0 +1,44 @@
+# Directorios de sistema y temporales
+/vendor/
+/node_modules/
+/public/build/
+/storage/
+/tmp/
+.idea/
+.vscode/
+/.phpunit/
+/.php_cs.cache
+/.php-cs-fixer.cache
+
+# Archivos de configuración
+config/
+.env
+.env.local
+.env.*.local
+
+# Archivos de caché
+/cache/
+/var/cache/
+*.log
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos generados por composer
+composer.lock
+composer.phar
+
+# Archivos de prueba
+/tests/_output/
+/tests/_support/_generated/
+
+# Archivos de despliegue
+/deploy/
+/dist/
+
+# Otros archivos y directorios comúnmente ignorados
+.htaccess
+.htpasswd
+*.bak
+*.tmp
