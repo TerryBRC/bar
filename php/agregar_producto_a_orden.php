@@ -1,6 +1,6 @@
 <?php
 //php/agregar_producto_a_orden.php
-require_once "inc/session_start.php";
+require_once "../inc/session_start.php";
 require_once "main.php";
 
 $conexion = conexion();
