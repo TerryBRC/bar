@@ -28,24 +28,6 @@ $datos_mesas = $conexion->query($consulta_datos_mesas);
                         <a href="index.php?vista=create_order&mesa_id=<?php echo $mesa['id']; ?>" class="button is-info is-rounded">
                             Agregar Productos
                         </a>
-                        <a href="index.php?vista=request_bill&mesa_id=<?php echo $mesa['id']; ?>" class="button is-warning is-rounded">
-                            Pedir Cuenta
-                        </a>
-                        
-
-                    <?php elseif ($mesa['estado'] == 'esperando_cuenta'): ?>
-                        <!-- Botón para procesar pago, solo se mostrara si el rol del usuario es id 2 $_SESSION['rol_id'] -->
-                         <?php if ($_SESSION['rol_id'] == 1 || $_SESSION['rol_id'] == 2): ?>
-                            <a href="index.php?vista=process_payment&mesa_id=<?php echo $mesa['id']; ?>" class="button is-danger is-rounded">
-                                Procesar Pago
-                            </a>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                    <!-- Botón para actualizar la mesa, solo se mostrara si el rol del usuario es id 1 $_SESSION['rol_id'] -->
-                    <?php if ($_SESSION['rol_id'] == 1): ?>
-                        <a href="index.php?vista=update_table&mesa_id=<?php echo $mesa['id']; ?>" class="button is-link is-rounded">
-                            Actualizar Mesa
-                        </a>
                     <?php endif; ?>
                 </div>
             </div>

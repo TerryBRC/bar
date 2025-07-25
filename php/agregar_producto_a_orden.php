@@ -1,13 +1,12 @@
 <?php
-// agregar_producto_a_orden.php
-//ini_set('display_errors', 1); // Temporalmente para depuración
-//ini_set('display_startup_errors', 1); // Temporalmente para depuración
-//error_reporting(E_ALL); // Temporalmente para depuración
-
+//php/agregar_producto_a_orden.php
+require_once "./inc/session_start.php";
 require_once "main.php";
 
 $conexion = conexion();
-
+if (!empty($_POST['guarniciones'])) {
+    $_SESSION['guarniciones_por_detalle'][$detalle_id] = $_POST['guarniciones'];
+}
 // Validar método y parámetros
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("HTTP/1.1 400 Bad Request");
