@@ -123,7 +123,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <body>
 
 <div class="no-print">
-  <button onclick="window.print()">Imprimir Orden</button>
+  <button class="button is-link is-outlined" onclick="window.print()">Imprimir Orden</button>
 </div>
 
 <h1>Orden #<?php echo $orden_id; ?></h1>
@@ -148,16 +148,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <tr>
       <td>
         <?php echo htmlspecialchars($detalle['producto_nombre']); ?>
-        <?php if (isset($guarniciones_por_detalle[$detalle['detalle_id']])): ?>
-          <div class="guarniciones">
-            Guarniciones:
-            <ul>
-              <?php foreach ($guarniciones_por_detalle[$detalle['detalle_id']] as $g): ?>
-                <li><?php echo htmlspecialchars($g); ?></li>
-              <?php endforeach; ?>
-            </ul>
-          </div>
-        <?php endif; ?>
       </td>
       <td><?php echo $detalle['cantidad']; ?></td>
       <td>$<?php echo number_format($detalle['precio'], 2); ?></td>
