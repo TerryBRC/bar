@@ -1,21 +1,16 @@
 <?php
-// create_order.php
-require_once "./php/main.php"; // Assuming this handles your DB connection
+require_once "./php/main.php";
 require_once "./inc/session_start.php";
 
-$conexion = conexion(); // Get the database 
-// Supongamos que $conexion ya está disponible y $current_order_id se pasa por GET
-$current_order_id = isset($_GET['order_id']) ? (int)$_GET['order_id'] : 0;
+$conexion = conexion();
 
-// Get mesa_id and handle current order
+$current_order_id = isset($_GET['order_id']) ? (int)$_GET['order_id'] : 0;
 $mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
-$current_order_id = 0;
 $mesa_numero = '';
 $categorias_con_productos = [];
 $detalle_orden_actual = [];
 
 if ($mesa_id > 0) {
-    // Verify mesa exists
     $consulta_mesa = $conexion->prepare("SELECT id, numero, estado FROM mesas WHERE id = ?");
     $consulta_mesa->execute([$mesa_id]);
     $mesa = $consulta_mesa->fetch(PDO::FETCH_ASSOC);
@@ -27,37 +22,36 @@ if ($mesa_id > 0) {
 
     $mesa_numero = $mesa['numero'];
 
-    // Find existing order
-    $consulta_orden = $conexion->prepare("SELECT id FROM ordenes WHERE mesa_id = ? AND estado = 'abierta' LIMIT 1");
-    $consulta_orden->execute([$mesa_id]);
-    $orden_existente = $consulta_orden->fetch(PDO::FETCH_ASSOC);
+    // Buscar o crear orden abierta
+    if ($current_order_id === 0) {
+        $consulta_orden = $conexion->prepare("SELECT id FROM ordenes WHERE mesa_id = ? AND estado = 'abierta' LIMIT 1");
+        $consulta_orden->execute([$mesa_id]);
+        $orden_existente = $consulta_orden->fetch(PDO::FETCH_ASSOC);
 
-    if ($orden_existente) {
-        $current_order_id = $orden_existente['id'];
-    } else {
-        // Create new order if mesa is free
-        if ($mesa['estado'] === 'libre') {
-            try {
-                $conexion->beginTransaction();
-                
-                // Create order
-                $stmt = $conexion->prepare("INSERT INTO ordenes (mesa_id, estado, fecha) VALUES (?, 'abierta', NOW())");
-                $stmt->execute([$mesa_id]);
-                $current_order_id = $conexion->lastInsertId();
-                
-                // Update mesa status
-                $stmt = $conexion->prepare("UPDATE mesas SET estado = 'ocupada' WHERE id = ?");
-                $stmt->execute([$mesa_id]);
-                
-                $conexion->commit();
-            } catch (PDOException $e) {
-                $conexion->rollBack();
-                header("Location: index.php?status=error&message=" . urlencode("Error al crear orden: " . $e->getMessage()));
+        if ($orden_existente) {
+            $current_order_id = $orden_existente['id'];
+        } else {
+            if ($mesa['estado'] === 'libre') {
+                try {
+                    $conexion->beginTransaction();
+
+                    $stmt = $conexion->prepare("INSERT INTO ordenes (mesa_id, estado, fecha) VALUES (?, 'abierta', NOW())");
+                    $stmt->execute([$mesa_id]);
+                    $current_order_id = $conexion->lastInsertId();
+
+                    $stmt = $conexion->prepare("UPDATE mesas SET estado = 'ocupada' WHERE id = ?");
+                    $stmt->execute([$mesa_id]);
+
+                    $conexion->commit();
+                } catch (PDOException $e) {
+                    $conexion->rollBack();
+                    header("Location: index.php?status=error&message=" . urlencode("Error al crear orden: " . $e->getMessage()));
+                    exit();
+                }
+            } else {
+                header("Location: index.php?status=error&message=" . urlencode("La mesa no está disponible para crear una nueva orden."));
                 exit();
             }
-        } else {
-            header("Location: index.php?status=error&message=" . urlencode("La mesa no está disponible para crear una nueva orden."));
-            exit();
         }
     }
 } else {
@@ -65,7 +59,7 @@ if ($mesa_id > 0) {
     exit();
 }
 
-// Get products by category
+// Consultar productos y categorías
 $consulta_categorias = $conexion->query("
     SELECT c.id, c.nombre, 
            p.id AS producto_id, p.nombre AS producto_nombre, p.precio
@@ -81,7 +75,7 @@ while ($row = $consulta_categorias->fetch(PDO::FETCH_ASSOC)) {
             'productos' => []
         ];
     }
-    
+
     if ($row['producto_id']) {
         $categorias_con_productos[$row['id']]['productos'][] = [
             'id' => $row['producto_id'],
@@ -91,11 +85,11 @@ while ($row = $consulta_categorias->fetch(PDO::FETCH_ASSOC)) {
     }
 }
 
-// Get current order details
+// Detalle de orden actual
 if ($current_order_id > 0) {
     $consulta_detalle = $conexion->prepare("
         SELECT do.id AS detalle_id, p.id AS producto_id, p.nombre AS producto_nombre, 
-               p.precio, do.cantidad
+               p.precio, do.cantidad,do.enviado
         FROM detalle_orden do
         JOIN productos p ON do.producto_id = p.id
         WHERE do.orden_id = ?
@@ -103,8 +97,8 @@ if ($current_order_id > 0) {
     $consulta_detalle->execute([$current_order_id]);
     $detalle_orden_actual = $consulta_detalle->fetchAll(PDO::FETCH_ASSOC);
 }
-
 ?>
+
 
 <style>
     .notification.is-success,
@@ -261,7 +255,17 @@ if ($current_order_id > 0) {
         </div>
 
         <div class="column is-half">
-            <h2 class="title is-4">Detalle de la Orden #<?php echo $current_order_id; ?></h2>
+            <div style="display: flex;justify-content: center;gap: 50px;align-items: center;">
+                <div>
+
+                    <h2 class="title is-4">Detalle de la Orden #<?php echo $current_order_id; ?></h2>
+                </div>
+                <div>
+
+                    <a href="./php/enviar_comanda.php?orden_id=<?= $current_order_id ?>" class="button is-info">📨 Enviar Comanda</a>
+                </div>
+
+            </div>
             <?php if (!empty($detalle_orden_actual)): ?>
                 <table class="table is-striped is-fullwidth">
                     <thead>
@@ -270,6 +274,7 @@ if ($current_order_id > 0) {
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Subtotal</th>
+                            <th>Enviado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -292,6 +297,15 @@ if ($current_order_id > 0) {
                                 <td>$<?php echo number_format($detalle['precio'], 2); ?></td>
                                 <td>$<?php echo number_format($subtotal, 2); ?></td>
                                 <td>
+                                    <?php if($detalle['enviado']==1): ?>
+                                       <p>Si</p>
+                                    <?php else: ?>
+                                        <p>No</p>
+                                    <?php endif; ?>
+
+
+                                </td>
+                                <td>
                                     <a href="./php/remove_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>&orden_id=<?php echo $current_order_id; ?>&mesa_id=<?php echo $mesa_id; ?>" 
                                        class="button is-danger is-small">
                                         Eliminar
@@ -310,10 +324,6 @@ if ($current_order_id > 0) {
                     </tfoot>
                 </table>
                 <div class="buttons is-right">
-                    <a href="./php/enviar_comandas.php?orden_id=<?php echo $current_order_id; ?>" 
-                       class="button is-danger is-large">
-                        ENVIAR
-                    </a>
                     <a href="controllers/request_bill_action.php?orden_id=<?php echo $current_order_id; ?>" 
                        class="button is-warning is-large">
                         COBRAR
