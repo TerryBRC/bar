@@ -6,6 +6,22 @@
 body,html{
     height: 100%;
     width: 100%;
+    background: linear-gradient(270deg, #00c6ff, #75a9e9, #b863b8, #ff0080);
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
+    color: #fff;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .main-container{
