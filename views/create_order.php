@@ -262,7 +262,7 @@ if ($current_order_id > 0) {
                 </div>
                 <div>
 
-                    <a href="./php/enviar_comanda.php?orden_id=<?= $current_order_id ?>" class="button is-info">📨 Enviar Comanda</a>
+                    <a href="./php/enviar_comanda.php?orden_id=<?= $current_order_id ?>" class="button is-link is-light">📨 Enviar Comanda</a>
                 </div>
 
             </div>
