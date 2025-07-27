@@ -14,7 +14,7 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-
+            <?php if($_SESSION['rol_id'] == 1): ?>
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">Empleados</a>
 
@@ -45,12 +45,14 @@
                     <!-- <a href="index.php?vista=product_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
-
+            <?php endif; ?>
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">Mesas</a>
 
                 <div class="navbar-dropdown">
+                    <?php if($_SESSION['rol_id'] == 1): ?>
                     <a href="index.php?vista=table_new" class="navbar-item">Nuevo</a>
+                    <?php endif; ?>
                     <a href="index.php?vista=table_list" class="navbar-item">Lista</a>
                     <!-- <a href="index.php?vista=table_search" class="navbar-item">Buscar</a> -->
                 </div>

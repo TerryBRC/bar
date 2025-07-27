@@ -53,7 +53,11 @@
     		if(headers_sent()){
 				echo "<script> window.location.href='index.php?vista=home'; </script>";
 			}else{
-				header("Location: index.php?vista=home");
+                if($_SESSION['rol_id']==1){
+                    header("Location: index.php?vista=home");
+                }else{
+                    header("Location: index.php?vista=table_list");
+                }
 			}
 
     	}else{
