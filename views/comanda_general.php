@@ -1,7 +1,7 @@
 <?php
             require_once "../inc/session_start.php"; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <link rel="stylesheet" href="../css/bulma.min.css">
 <link rel="stylesheet" href="../css/estilos.css">
