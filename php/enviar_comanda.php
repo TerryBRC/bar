@@ -7,7 +7,7 @@ if ($orden_id <= 0) {
     die("Orden inválida.");
 }
 $mesa_id_get = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
-if ($orden_id <= 0) {
+if ($mesa_id_get <= 0) {
     die("Mesa inválida.");
 }
 

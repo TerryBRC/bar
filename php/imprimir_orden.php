@@ -6,11 +6,11 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 $conexion = conexion();
 
 $current_order_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
-if ($orden_id <= 0) {
+if ($current_order_id <= 0) {
     die("Orden inválida.");
 }
 $current_mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
-if ($orden_id <= 0) {
+if ($current_mesa_id <= 0) {
     die("Mesa inválida.");
 }
 // Get current order details
