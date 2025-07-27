@@ -1,106 +1,183 @@
 <?php
-require_once 'main.php';
-require __DIR__ . '\..\vendor\autoload.php'; // Adjust path if needed
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+require_once "../inc/session_start.php";
+require_once "main.php";
+
 $conexion = conexion();
 
-$current_order_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
-if ($current_order_id <= 0) {
-    die("Orden inválida.");
-}
-$current_mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
-if ($current_mesa_id <= 0) {
-    die("Mesa inválida.");
-}
-// Get current order details
-if ($current_order_id > 0) {
-    $consulta_detalle = $conexion->prepare("
-        SELECT do.id AS detalle_id, p.id AS producto_id, p.nombre AS producto_nombre, 
-               p.precio, do.cantidad
-        FROM detalle_orden do
-        JOIN productos p ON do.producto_id = p.id
-        WHERE do.orden_id = ?
-    ");
-    $consulta_detalle->execute([$current_order_id]);
-    $detalle_orden_actual = $consulta_detalle->fetchAll(PDO::FETCH_ASSOC);
+$orden_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
+$mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
+
+if ($orden_id <= 0 || $mesa_id <= 0) {
+    die("Orden o mesa inválida.");
 }
 
-$printer = [
-    'printer_name' => 'PrinterName', // Replace with your printer name
-    'printer_ip' => ''];
-if ($printer) {
-    // 1. Fetch the actual order details for printing (items, quantities, prices)
-    $order_details_query = $conexion->prepare("
-        SELECT do.cantidad, p.precio, p.nombre AS producto_nombre
-        FROM detalle_orden do
-        JOIN productos p ON do.producto_id = p.id
-        WHERE do.orden_id = ?
-    ");
-    $order_details_query->execute([$current_order_id]);
-    $order_items = $order_details_query->fetchAll(PDO::FETCH_ASSOC);
+// Obtener info mesa
+$stmt = $conexion->prepare("SELECT numero FROM mesas WHERE id = ?");
+$stmt->execute([$mesa_id]);
+$mesa = $stmt->fetch(PDO::FETCH_ASSOC);
+$mesa_numero = $mesa ? $mesa['numero'] : "Desconocida";
 
-    // Get prefactura data if not already fetched for the total
-    if (!isset($prefactura_data)) {
-        $prefactura = $conexion->prepare("
-            SELECT o.id AS orden_id, m.numero AS mesa_numero, 
-                   SUM(do.cantidad * p.precio) AS total
-            FROM ordenes o
-            JOIN mesas m ON o.mesa_id = m.id
-            JOIN detalle_orden do ON o.id = do.orden_id
-            join productos p ON do.producto_id = p.id
-            WHERE o.id = ?
-            GROUP BY o.id, m.numero
-        ");
-        $prefactura->execute([$current_order_id]);
-        $prefactura_data = $prefactura->fetch(PDO::FETCH_ASSOC);
-        try {
-            $connector = new NetworkPrintConnector($printer['printer_ip'], 9100); // 9100 is common for raw TCP
-            $printer_obj = new Printer($connector);
+// Obtener detalles orden con productos
+$stmt = $conexion->prepare("
+    SELECT do.id AS detalle_id, p.nombre AS producto_nombre, p.categoria_id, p.precio, do.cantidad
+    FROM detalle_orden do
+    JOIN productos p ON do.producto_id = p.id
+    WHERE do.orden_id = ?
+");
+$stmt->execute([$orden_id]);
+$detalles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // --- Construct the Receipt ---
-            $printer_obj->setJustification(Printer::JUSTIFY_CENTER);
-            $printer_obj->text("RINCON CHINANDEGANO\n");
-            $printer_obj->text("--- Pre-factura ---\n");
-            $printer_obj->text("Mesa: " . $prefactura_data['mesa_numero'] . "\n");
-            $printer_obj->text("Fecha: " . date('d/m/Y H:i') . "\n");
-            $printer_obj->feed(2);
-
-            $printer_obj->setJustification(Printer::JUSTIFY_LEFT);
-            $printer_obj->text("--------------------------------\n");
-            $printer_obj->text(sprintf("%-6s %-18s %7s\n", "CANT", "PRODUCTO", "SUBTOTAL"));
-            $printer_obj->text("--------------------------------\n");
-
-            foreach ($order_items as $item) {
-                $subtotal_item = $item['cantidad'] * $item['precio'];
-                $printer_obj->text(sprintf("%-6s %-18s %7.2f\n", 
-                                          $item['cantidad'], 
-                                          $item['producto_nombre'], 
-                                          $subtotal_item));
-            }
-
-            $printer_obj->text("--------------------------------\n");
-            $printer_obj->setJustification(Printer::JUSTIFY_RIGHT);
-            $printer_obj->setTextSize(2, 2); // Larger text for total
-            $printer_obj->text("TOTAL: $" . number_format($prefactura_data['total'], 2) . "\n");
-            $printer_obj->setTextSize(1, 1); // Reset text size
-            $printer_obj->feed(3);
-            $printer_obj->setJustification(Printer::JUSTIFY_CENTER);
-            $printer_obj->text("¡Gracias por su visita!\n");
-            $printer_obj->feed(2);
-            $printer_obj->cut(); // Cut the paper
-
-            $printer_obj->close();
-            header("../index.php?vista=create_order&mesa_id=<?= $mesa_id_get; ?>");
-            //echo "<p>Impresión enviada a {$printer['printer_name']} ({$printer['printer_ip']}).</p>";
-
-        } catch (Exception $e) {
-            echo "<p>Error al imprimir: " . $e->getMessage() . "</p>";
-        }
-    } else {
-        echo "<p>No se encontraron detalles de la orden para imprimir.</p>";
-    }
-} else {
-    echo "<p>No se encontró una impresora activa o el ID de la orden es inválido.</p>";
-} 
+// Obtener guarniciones por detalle
+$guarniciones_por_detalle = [];
+$stmt = $conexion->prepare("SELECT detalle_orden_id, nombre FROM detalle_guarnicion WHERE detalle_orden_id IN (SELECT id FROM detalle_orden WHERE orden_id = ?)");
+$stmt->execute([$orden_id]);
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $guarniciones_por_detalle[$row['detalle_orden_id']][] = $row['nombre'];
+}
 ?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Imprimir Orden #<?php echo $orden_id; ?></title>
+<style>
+  /*Estilo hoja A4*/
+  /*body {
+    font-family: Arial, sans-serif;
+    margin: 1cm;
+    color: #000;
+  }
+  h1, h2 {
+    text-align: center;
+    margin-bottom: 0.5em;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 0.3em 0.5em;
+    text-align: left;
+  }
+  .guarniciones {
+    font-size: 0.85em;
+    color: #555;
+    margin-left: 1em;
+  }
+  .no-print {
+    margin-bottom: 1em;
+    text-align: center;
+  }
+
+  @media print {
+    .no-print {
+      display: none;
+    }
+  }*/
+    /*Estilo Rollo */
+  @media print {
+  @page {
+    size: 80mm auto; /* Ancho de ticket, altura automática */
+    margin: 5mm 5mm 5mm 5mm; /* Márgenes reducidos */
+  }
+  body {
+    width: 80mm;
+    margin: 0;
+    font-family: monospace, monospace;
+    font-size: 12px;
+    color: #000;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th, td {
+    border: none;
+    padding: 2px 0;
+    text-align: left;
+  }
+  h1, h2 {
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 5px 0;
+  }
+  .guarniciones {
+    font-size: 10px;
+    color: #444;
+    margin-left: 10px;
+  }
+  .no-print {
+    display: none;
+  }
+}
+
+</style>
+    <link rel="stylesheet" href="../css/bulma.min.css">
+<link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body>
+
+<div class="no-print">
+  <button onclick="window.print()">Imprimir Orden</button>
+</div>
+
+<h1>Orden #<?php echo $orden_id; ?></h1>
+<h2>Mesa <?php echo htmlspecialchars($mesa_numero); ?></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cant</th>
+      <th>Precio Unitario</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    $total = 0;
+    foreach ($detalles as $detalle):
+        $subtotal = $detalle['precio'] * $detalle['cantidad'];
+        $total += $subtotal;
+    ?>
+    <tr>
+      <td>
+        <?php echo htmlspecialchars($detalle['producto_nombre']); ?>
+        <?php if (isset($guarniciones_por_detalle[$detalle['detalle_id']])): ?>
+          <div class="guarniciones">
+            Guarniciones:
+            <ul>
+              <?php foreach ($guarniciones_por_detalle[$detalle['detalle_id']] as $g): ?>
+                <li><?php echo htmlspecialchars($g); ?></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      </td>
+      <td><?php echo $detalle['cantidad']; ?></td>
+      <td>$<?php echo number_format($detalle['precio'], 2); ?></td>
+      <td>$<?php echo number_format($subtotal, 2); ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" style="text-align:right;"><strong>Total</strong></td>
+      <td><strong>$<?php echo number_format($total, 2); ?></strong></td>
+    </tr>
+  </tfoot>
+</table>
+
+<p>¡Gracias por su preferencia!</p>
+<div class="no-print">
+  <a href="../index.php?vista=create_order&mesa_id=<?= $mesa_id; ?>" class="button is-link is-outlined">
+    <span><--- Volver a la mesa</span>
+  </a>
+</div>
+</body>
+</html>
