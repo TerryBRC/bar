@@ -5,8 +5,14 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 $conexion = conexion();
 
-$current_order_id = $_GET['orden_id'];
-$current_mesa_id = $_GET['mesa_id'];
+$current_order_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
+if ($orden_id <= 0) {
+    die("Orden inválida.");
+}
+$current_mesa_id = isset($_GET['mesa_id']) ? intval($_GET['mesa_id']) : 0;
+if ($orden_id <= 0) {
+    die("Mesa inválida.");
+}
 // Get current order details
 if ($current_order_id > 0) {
     $consulta_detalle = $conexion->prepare("
@@ -85,6 +91,7 @@ if ($printer) {
             $printer_obj->cut(); // Cut the paper
 
             $printer_obj->close();
+            header("../index.php?vista=create_order&mesa_id=<?= $mesa_id_get; ?>");
             //echo "<p>Impresión enviada a {$printer['printer_name']} ({$printer['printer_ip']}).</p>";
 
         } catch (Exception $e) {
