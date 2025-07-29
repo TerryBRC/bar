@@ -325,7 +325,7 @@ if ($current_order_id > 0) {
                 </table>
                 <div class="buttons is-right">
                     <?php if($_SESSION['rol_id']===1 || $_SESSION['rol_id']===2) : ?>
-                        <a href="controllers/request_bill_action.php?orden_id=<?php echo $current_order_id; ?>" 
+                        <a href="./php/cobrar_orden.php?mesa_id=<?php echo $mesa_id; ?>&orden_id=<?php echo $current_order_id; ?>" 
                         class="button is-warning is-large">
                             COBRAR
                         </a>

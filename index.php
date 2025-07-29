@@ -1,4 +1,6 @@
-<?php require 'inc/session_start.php'; ?>
+<?php require 'inc/session_start.php'; 
+?>
+<?php 	date_default_timezone_set('America/Managua'); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

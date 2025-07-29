@@ -57,10 +57,11 @@
                     <!-- <a href="index.php?vista=table_search" class="navbar-item">Buscar</a> -->
                 </div>
             </div>
-
+            <?php if($_SESSION['rol_id'] == 1 or $_SESSION['rol_id'] == 2 ): ?>
             <a class="navbar-item is-hoverable" href="index.php?vista=order_list">
-        Cajero
-      </a>
+                Cajero
+            </a>
+            <?php endif; ?>
         </div>
 
         <div class="navbar-end">
