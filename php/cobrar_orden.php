@@ -146,9 +146,9 @@ $total = 0;
     <div class="box">
         <p>¿Desea imprimir el comprobante?</p>
         <a href="comprobante.php?orden_id=<?= $orden_id ?>" target="_blank" class="button is-info">🖨️ Sí, imprimir</a>
-        <a href="../index.php?vista=table_list" class="button is-light">❌ No, volver</a>
+        <a href="index.php?vista=table_list" class="button is-light">❌ No, volver</a>
     </div>
 <?php endif; ?>
 
 
-    <a href="../index.php?vista=table_list" class="button is-light mt-4">⬅️ Volver a mesas</a>
+    <a href="index.php?vista=table_list" class="button is-light mt-4">⬅️ Volver a mesas</a>
