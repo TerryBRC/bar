@@ -1,4 +1,5 @@
 <?php
+//views/create_order.php
 require_once "./php/main.php";
 require_once "./inc/session_start.php";
 
@@ -325,7 +326,7 @@ if ($current_order_id > 0) {
                 </table>
                 <div class="buttons is-right">
                     <?php if($_SESSION['rol_id']===1 || $_SESSION['rol_id']===2) : ?>
-                        <a href="./php/cobrar_orden.php?mesa_id=<?php echo $mesa_id; ?>&orden_id=<?php echo $current_order_id; ?>" 
+                        <a href="./index.php?vista=request_bill&mesa_id=<?php echo $mesa_id; ?>&orden_id=<?php echo $current_order_id; ?>" 
                         class="button is-warning is-large">
                             COBRAR
                         </a>

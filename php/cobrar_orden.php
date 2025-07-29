@@ -1,6 +1,6 @@
 <?php
 //php/cobrar_orden.php
-require_once "../inc/session_start.php";
+require_once "./inc/session_start.php";
 require_once "main.php";
 
 $conexion = conexion();
@@ -73,8 +73,6 @@ $stmt->execute([$orden_id]);
 $detalles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total = 0;
 ?>
-
-<div class="container pb-6 pt-6">
     <p><strong>Mesa:</strong> <?= htmlspecialchars($mesa_numero) ?></p>
     <p><strong>Orden ID:</strong> <?= $orden_id ?></p>
 
@@ -148,10 +146,9 @@ $total = 0;
     <div class="box">
         <p>¿Desea imprimir el comprobante?</p>
         <a href="comprobante.php?orden_id=<?= $orden_id ?>" target="_blank" class="button is-info">🖨️ Sí, imprimir</a>
-        <a href="index.php?vista=table_list" class="button is-light">❌ No, volver</a>
+        <a href="../index.php?vista=table_list" class="button is-light">❌ No, volver</a>
     </div>
 <?php endif; ?>
 
 
-    <a href="index.php?vista=table_list" class="button is-light mt-4">⬅️ Volver a mesas</a>
-</div>
+    <a href="../index.php?vista=table_list" class="button is-light mt-4">⬅️ Volver a mesas</a>
