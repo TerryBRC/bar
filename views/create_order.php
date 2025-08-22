@@ -134,6 +134,12 @@ if ($current_order_id > 0) {
 <div class="container is-fluid">
     <h1 class="title">Orden de Mesa</h1>
     <h2 class="subtitle">Agregar productos a la orden</h2>
+    <?php if($_SESSION['rol_id'] == 1 or $_SESSION['rol_id'] == 2 ): ?>
+                                        <a href="./php/cerrar_mesa.php?orden_id=<?php echo $current_order_id; ?>" 
+                                        class="button is-danger is-small">
+                                            Cerrar mesa
+                                        </a>
+                                    <?php endif; ?>
 </div>
 
 <div class="container pb-6 pt-6">
@@ -307,10 +313,12 @@ if ($current_order_id > 0) {
 
                                 </td>
                                 <td>
-                                    <a href="./php/remove_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>&orden_id=<?php echo $current_order_id; ?>&mesa_id=<?php echo $mesa_id; ?>" 
-                                       class="button is-danger is-small">
-                                        Eliminar
-                                    </a>
+                                    <?php if($_SESSION['rol_id'] == 1 or $_SESSION['rol_id'] == 2 ): ?>
+                                        <a href="./php/remove_item.php?detalle_id=<?php echo $detalle['detalle_id']; ?>&orden_id=<?php echo $current_order_id; ?>&mesa_id=<?php echo $mesa_id; ?>" 
+                                        class="button is-danger is-small">
+                                            Eliminar
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php $total_orden += $subtotal; ?>

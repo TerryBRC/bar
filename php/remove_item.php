@@ -24,6 +24,7 @@ try {
     if (!$verificar_detalle->fetch()) {
         throw new Exception("El ítem no pertenece a esta orden");
     }
+    
 
     // Eliminar el ítem
     $eliminar = $conexion->prepare("

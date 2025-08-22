@@ -61,6 +61,9 @@
             <a class="navbar-item is-hoverable" href="index.php?vista=order_list">
                 Cajero
             </a>
+            <a class="navbar-item is-hoverable" href="index.php?vista=reports">
+                Reportes
+            </a>
             <?php endif; ?>
         </div>
 

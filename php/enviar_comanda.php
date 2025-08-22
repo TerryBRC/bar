@@ -77,7 +77,8 @@ $_SESSION['comanda_barra'] = $para_barra;
             $orden_id = $_GET['orden_id'] ?? 0;
             $comida = $_SESSION['comanda_cocina'] ?? [];
             $bebida = $_SESSION['comanda_barra'] ?? [];
-            
+            // Fecha y hora actual
+            $fecha_actual = date('Y-m-d H:i:s');
             // Definir variables para la vista
             $titulo = "Comanda enviada para orden #$orden_id";
             $hay_comida = !empty($comida);
@@ -88,6 +89,7 @@ $_SESSION['comanda_barra'] = $para_barra;
                <div class="columns is-centered">
         <div class="column is-two-thirds">
             <?php if($hay_comida): ?>
+                <h2><?php echo $fecha_actual ?></h2>
                 <div class="box">
                     <h2 class="subtitle is-4 has-text-primary">
                         <span class="icon"><i class="fas fa-utensils"></i></span>
