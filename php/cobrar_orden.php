@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         metodo.value = 'efectivo';
         monto.value = '';
         mensajeCambio.style.display = 'none';
-        campoMonto.style.display = 'block';
+        campoMonto.style.display = (metodo.value === 'efectivo' || metodo.value === 'transferencia') ? 'block' : 'none';
         monto.readOnly = false;
     }
 
