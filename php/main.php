@@ -4,7 +4,7 @@
 
         $pdo = new PDO ('mysql:host=localhost;dbname=restaurante',
         'root',
-        '');
+        'root123');
         return $pdo;
     }
     #Verificar datos

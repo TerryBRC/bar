@@ -42,3 +42,4 @@ composer.phar
 .htpasswd
 *.bak
 *.tmp
+php/main.php
