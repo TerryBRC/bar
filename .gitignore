@@ -43,3 +43,4 @@ composer.phar
 *.bak
 *.tmp
 php/main.php
+php/main.php

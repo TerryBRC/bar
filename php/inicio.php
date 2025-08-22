@@ -11,7 +11,6 @@ $conn = conexion();
 if (!$conn) {
     die("Error: No se pudo conectar a la base de datos.");
 }
-
 // SQL query using a prepared statement for security.
 $sql = "SELECT
     p.nombre AS producto,
