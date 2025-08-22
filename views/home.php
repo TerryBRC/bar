@@ -5,3 +5,11 @@
     <p>Aquí puedes agregar más contenido, como estadísticas, gráficos o cualquier otra información relevante.</p>
     <p>Utiliza el menú de navegación para acceder a otras secciones.</p>
 </div>
+ <div class="container pb-6 pt-6">
+<?php
+     require_once "./php/main.php";
+     
+     require_once "./php/inicio.php";
+    ?>
+</div>
+
